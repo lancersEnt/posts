@@ -1,0 +1,34 @@
+scalar DateTime
+
+type Post {
+  # Example field (placeholder)
+  id: String!
+  content: String!
+  authorId: String!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input CreatePostInput {
+  # Example field (placeholder)
+  content: String!
+  authorId: String!
+  createdAt: DateTime!
+}
+
+input UpdatePostInput {
+  content: String
+  authorId: String
+  updatedAt: DateTime!
+}
+
+type Query {
+  posts: [Post]!
+  post(id: String!): Post
+}
+
+type Mutation {
+  createPost(createPostInput: CreatePostInput!): Post!
+  updatePost(id: String!, updatePostInput: UpdatePostInput!): Post!
+  removePost(id: String!): Post
+}
