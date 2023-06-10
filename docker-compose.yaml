@@ -1,0 +1,92 @@
+# version: "3"
+
+# services:
+
+#   posts-svc:
+#     build:
+#       context: "./microservices/posts"
+#     networks:
+#       - "posts-svc"
+#     ports:
+#       - "50051:50051"
+#     depends_on:
+#       - "posts-db"
+#       - "cache"
+#     environment:
+#       DATABASE_URL: "mongodb://saaf95:saaf95@localhost:27017/postsdb?authSource=admin&directConnection=true"
+#     restart: "on-failure"
+
+#   posts-db:
+#     image: prismagraphql/mongo-single-replica:5.0.3
+#     container_name: "posts-db"
+#     ports:
+#       - 27017:27017
+#     environment:
+#       MONGO_INITDB_ROOT_USERNAME: saaf95
+#       MONGO_INITDB_ROOT_PASSWORD: saaf95
+#     restart: "on-failure"
+
+#   cache:
+#     image: "redis:5-alpine"
+#     container_name: "redis-cache"
+#     networks:
+#       - "frontend"
+#       - "backend"
+#     expose:
+#       - "6379"
+#     healthcheck:
+#       test: ["CMD-SHELL", "sh -c 'redis-cli PING'"]
+#       interval: 30s
+#       timeout: 30s
+#       retries: 3
+#     restart: "on-failure"
+
+# networks:
+#   posts-svc:
+
+version: '3.7'
+
+services:
+  posts:
+    container_name: myklad-posts-svc
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 9229:9229
+    command: npm run start:dev
+    env_file:
+      - .env
+    networks:
+      - webnet
+    depends_on:
+      - redis
+      - posts-db
+
+  redis:
+    image: redis:5
+    container_name: myklad-redis
+    networks:
+      - webnet
+
+  posts-db:
+    image: prismagraphql/mongo-single-replica:5.0.3
+    container_name: "myklad-posts-db"
+    networks:
+      - webnet
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: saaf95
+      MONGO_INITDB_ROOT_PASSWORD: saaf95
+    restart: "on-failure"
+    volumes:
+      - mongodata:/var/lib/mongodb/data
+
+networks:
+  webnet:
+volumes:
+  mongodata:

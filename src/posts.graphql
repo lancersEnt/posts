@@ -13,13 +13,13 @@ input CreatePostInput {
   # Example field (placeholder)
   content: String!
   authorId: String!
-  createdAt: DateTime!
+  createdAt: DateTime
 }
 
 input UpdatePostInput {
   content: String
   authorId: String
-  updatedAt: DateTime!
+  updatedAt: DateTime
 }
 
 type Query {
