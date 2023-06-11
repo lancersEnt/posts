@@ -1,8 +1,14 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.3",
+        import: ["@key", "@shareable"])
+
+directive @key(fields: String!) on OBJECT | INTERFACE
+
 scalar DateTime
 
-type Post {
+type Post @key(fields: "id"){
   # Example field (placeholder)
-  id: String!
+  id: ID!
   content: String!
   authorId: String!
   createdAt: DateTime
@@ -22,7 +28,7 @@ input UpdatePostInput {
   updatedAt: DateTime
 }
 
-type Query {
+extend type Query {
   posts: [Post]!
   post(id: String!): Post
 }
@@ -32,3 +38,4 @@ type Mutation {
   updatePost(id: String!, updatePostInput: UpdatePostInput!): Post!
   removePost(id: String!): Post
 }
+

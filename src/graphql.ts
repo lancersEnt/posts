@@ -10,13 +10,13 @@
 export class CreatePostInput {
     content: string;
     authorId: string;
-    createdAt: DateTime;
+    createdAt?: Nullable<DateTime>;
 }
 
 export class UpdatePostInput {
     content?: Nullable<string>;
     authorId?: Nullable<string>;
-    updatedAt: DateTime;
+    updatedAt?: Nullable<DateTime>;
 }
 
 export class Post {

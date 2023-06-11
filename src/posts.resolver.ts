@@ -1,6 +1,13 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveReference,
+} from '@nestjs/graphql';
 import { PostsService } from './posts.service';
 import { Prisma } from '@prisma/client';
+import { Post } from './graphql';
 
 @Resolver('Post')
 export class PostsResolver {
@@ -32,5 +39,14 @@ export class PostsResolver {
   @Mutation('removePost')
   remove(@Args('id') id: string) {
     return this.postsService.remove({ id });
+  }
+
+  @ResolveReference()
+  resolveReference(reference: {
+    __typename: string;
+    id: string;
+  }): Promise<Post> {
+    const id = reference.id;
+    return this.postsService.findOne({ id });
   }
 }
