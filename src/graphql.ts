@@ -19,10 +19,16 @@ export class UpdatePostInput {
     updatedAt?: Nullable<DateTime>;
 }
 
+export class User {
+    id: string;
+    posts?: Nullable<Post[]>;
+}
+
 export class Post {
     id: string;
     content: string;
     authorId: string;
+    user?: Nullable<User>;
     createdAt?: Nullable<DateTime>;
     updatedAt?: Nullable<DateTime>;
 }

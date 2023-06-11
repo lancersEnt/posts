@@ -4,13 +4,21 @@ extend schema
 
 directive @key(fields: String!) on OBJECT | INTERFACE
 
+directive @external on OBJECT | FIELD_DEFINITION
+
 scalar DateTime
+
+type User @key(fields: "id"){
+  id: ID! @external
+  posts: [Post!]
+}
 
 type Post @key(fields: "id"){
   # Example field (placeholder)
   id: ID!
   content: String!
   authorId: String!
+  user: User
   createdAt: DateTime
   updatedAt: DateTime
 }

@@ -9,6 +9,7 @@ import {
   ApolloFederationDriverConfig,
 } from '@nestjs/apollo';
 import { PrismaService } from '../prisma/prisma.service';
+import { UsersResolver } from './users.resolver';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { PrismaService } from '../prisma/prisma.service';
       },
     }),
   ],
-  providers: [PrismaService, PostsResolver, PostsService],
+  providers: [PrismaService, PostsService, PostsResolver, UsersResolver],
 })
 export class PostsModule {}
