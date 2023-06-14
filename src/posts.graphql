@@ -2,14 +2,12 @@ extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.3",
         import: ["@key", "@shareable"])
 
-directive @key(fields: String!) on OBJECT | INTERFACE
-
 directive @external on OBJECT | FIELD_DEFINITION
 
 scalar DateTime
 
-type User @key(fields: "id"){
-  id: ID! @external
+extend type User @key(fields: "id"){
+  id: ID!
   posts: [Post!]
 }
 

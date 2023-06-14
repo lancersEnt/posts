@@ -47,30 +47,30 @@
 version: '3.7'
 
 services:
-  posts:
-    container_name: myklad-posts-svc
-    build:
-      context: .
-      target: development
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    ports:
-      - 9229:9229
-    command: npm run start:dev
-    env_file:
-      - .env
-    networks:
-      - webnet
-    depends_on:
-      - redis
-      - posts-db
+  # posts:
+  #   container_name: myklad-posts-svc
+  #   build:
+  #     context: .
+  #     target: development
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   ports:
+  #     - 9229:9229
+  #   command: npm run start:dev
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - webnet
+  #   depends_on:
+  #     - redis
+  #     - posts-db
 
-  redis:
-    image: redis:5
-    container_name: myklad-redis
-    networks:
-      - webnet
+  # redis:
+  #   image: redis:5
+  #   container_name: myklad-redis
+  #   networks:
+  #     - webnet
 
   posts-db:
     image: prismagraphql/mongo-single-replica:5.0.3

@@ -1,3 +1,4 @@
+
 /*
  * -------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
@@ -17,11 +18,6 @@ export class UpdatePostInput {
     content?: Nullable<string>;
     authorId?: Nullable<string>;
     updatedAt?: Nullable<DateTime>;
-}
-
-export class User {
-    id: string;
-    posts?: Nullable<Post[]>;
 }
 
 export class Post {
@@ -45,6 +41,11 @@ export abstract class IMutation {
     abstract updatePost(id: string, updatePostInput: UpdatePostInput): Post | Promise<Post>;
 
     abstract removePost(id: string): Nullable<Post> | Promise<Nullable<Post>>;
+}
+
+export class User {
+    id: string;
+    posts?: Nullable<Post[]>;
 }
 
 export type DateTime = any;

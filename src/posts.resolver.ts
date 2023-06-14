@@ -6,17 +6,29 @@ import {
   ResolveReference,
   ResolveField,
   Parent,
+  Context,
 } from '@nestjs/graphql';
 import { PostsService } from './posts.service';
 import { Prisma } from '@prisma/client';
 import { Post, User } from './graphql';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { log } from 'console';
 
 @Resolver('Post')
 export class PostsResolver {
   constructor(private readonly postsService: PostsService) {}
 
   @Mutation('createPost')
-  create(@Args('createPostInput') createPostInput: Prisma.PostCreateInput) {
+  @UseGuards(JwtAuthGuard)
+  create(
+    @Args('createPostInput') createPostInput: Prisma.PostCreateInput,
+    @Context() context: any,
+  ) {
+    const { req: request, res } = context;
+    const userId: string = request.user.userId;
+    createPostInput.authorId = userId;
+
     return this.postsService.create(createPostInput);
   }
 
