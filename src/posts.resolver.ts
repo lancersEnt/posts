@@ -28,7 +28,6 @@ export class PostsResolver {
     const { req: request, res } = context;
     const userId: string = request.user.userId;
     createPostInput.authorId = userId;
-
     return this.postsService.create(createPostInput);
   }
 
