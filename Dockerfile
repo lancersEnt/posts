@@ -1,29 +1,22 @@
-FROM node:alpine As development
+FROM node:18.16-alpine as builder
 
-WORKDIR /usr/src/app
-
+WORKDIR /usr/share/posts-svc
 COPY package*.json ./
-
-RUN npm install --only=development
-
-COPY . .
-
+COPY prisma ./prisma/
+COPY tsconfig.build.json ./
+COPY tsconfig.json ./
+RUN npm install
 RUN npm run build
-
-
-FROM node:alpine as production
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN npm install --only=production
-
 COPY . .
 
-COPY --from=development /usr/src/app/dist ./dist
+FROM node:18.16-alpine
+COPY --from=builder /usr/share/posts-svc/node_modules ./node_modules/
+COPY --from=builder /usr/share/posts-svc/package*.json ./
+COPY --from=builder /usr/share/posts-svc/dist ./dist/
+COPY --from=builder /usr/share/posts-svc/tsconfig.build.json ./
+COPY --from=builder /usr/share/posts-svc/tsconfig.json ./
+COPY --from=builder /usr/share/posts-svc/prisma ./prisma/
 
-CMD ["node", "dist/main"]
+CMD [ "set", "NODE_OPTIONS=--max_old_space_size=8192" ]
+
+CMD ["npm", "run", "start:dev"]

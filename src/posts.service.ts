@@ -7,8 +7,6 @@ export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   create(createPostInput: Prisma.PostCreateInput) {
-    const now = new Date().toISOString();
-    createPostInput.createdAt = now;
     return this.prisma.post.create({
       data: createPostInput,
     });
@@ -28,8 +26,7 @@ export class PostsService {
     postWhereUniqueInput: Prisma.PostWhereUniqueInput,
     updatePostInput: Prisma.PostUpdateInput,
   ) {
-    const now = new Date().toISOString();
-    updatePostInput.updatedAt = now;
+    updatePostInput.updatedAt = new Date();
     return this.prisma.post.update({
       where: postWhereUniqueInput,
       data: updatePostInput,

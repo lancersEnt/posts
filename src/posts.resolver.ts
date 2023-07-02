@@ -13,7 +13,6 @@ import { Prisma } from '@prisma/client';
 import { Post, User } from './graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { log } from 'console';
 
 @Resolver('Post')
 export class PostsResolver {
