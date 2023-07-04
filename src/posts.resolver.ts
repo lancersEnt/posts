@@ -40,6 +40,11 @@ export class PostsResolver {
     return this.postsService.findOne({ id });
   }
 
+  @Query('userPosts')
+  findUserPosts(@Args('id') id: string) {
+    return this.postsService.forUser(id);
+  }
+
   @Mutation('updatePost')
   update(
     @Args('id') id: string,

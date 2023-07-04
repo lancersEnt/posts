@@ -33,6 +33,8 @@ export abstract class IQuery {
     abstract posts(): Nullable<Post>[] | Promise<Nullable<Post>[]>;
 
     abstract post(id: string): Nullable<Post> | Promise<Nullable<Post>>;
+
+    abstract userPosts(id: string): Nullable<Post>[] | Promise<Nullable<Post>[]>;
 }
 
 export abstract class IMutation {
