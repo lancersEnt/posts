@@ -1,23 +1,16 @@
-extend schema
-  @link(url: "https://specs.apollo.dev/federation/v2.3",
-        import: ["@key", "@shareable"])
-
-directive @external on OBJECT | FIELD_DEFINITION
-
 scalar DateTime
-scalar GraphQLUpload
 
-extend type User @key(fields: "id"){
+type User{
   id: ID!
   posts: [Post!]
 }
 
-type Post @key(fields: "id"){
+type Post {
   # Example field (placeholder)
   id: ID!
   content: String!
-  imageUrl: String
   authorId: String!
+  imageUrl: String
   user: User
   createdAt: DateTime
   updatedAt: DateTime
@@ -26,19 +19,19 @@ type Post @key(fields: "id"){
 input CreatePostInput {
   # Example field (placeholder)
   content: String!
-  imageUrl: String
   authorId: String!
+  imageUrl: String
   createdAt: DateTime
 }
 
 input UpdatePostInput {
   content: String
-  imageUrl: String
   authorId: String
+  imageUrl: String
   updatedAt: DateTime
 }
 
-extend type Query {
+type Query {
   posts: [Post]!
   post(id: String!): Post
   userPosts(id: String!): [Post]!
@@ -48,5 +41,13 @@ type Mutation {
   createPost(createPostInput: CreatePostInput!): Post!
   updatePost(id: String!, updatePostInput: UpdatePostInput!): Post!
   removePost(id: String!): Post
+}
+
+type Result {
+  newPost: Post
+}
+
+type Subscription {
+  postCreated: Result
 }
 

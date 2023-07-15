@@ -10,19 +10,27 @@
 
 export class CreatePostInput {
     content: string;
+    imageUrl?: Nullable<string>;
     authorId: string;
     createdAt?: Nullable<DateTime>;
 }
 
 export class UpdatePostInput {
     content?: Nullable<string>;
+    imageUrl?: Nullable<string>;
     authorId?: Nullable<string>;
     updatedAt?: Nullable<DateTime>;
+}
+
+export class User {
+    id: string;
+    posts?: Nullable<Post[]>;
 }
 
 export class Post {
     id: string;
     content: string;
+    imageUrl?: Nullable<string>;
     authorId: string;
     user?: Nullable<User>;
     createdAt?: Nullable<DateTime>;
@@ -45,10 +53,14 @@ export abstract class IMutation {
     abstract removePost(id: string): Nullable<Post> | Promise<Nullable<Post>>;
 }
 
-export class User {
-    id: string;
-    posts?: Nullable<Post[]>;
+export class Result {
+    newPost?: Nullable<Post>;
+}
+
+export abstract class ISubscription {
+    abstract postCreated(): Nullable<Result> | Promise<Nullable<Result>>;
 }
 
 export type DateTime = any;
+export type GraphQLUpload = any;
 type Nullable<T> = T | null;

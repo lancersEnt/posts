@@ -6,14 +6,19 @@ import { Prisma } from '@prisma/client';
 export class PostsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createPostInput: Prisma.PostCreateInput) {
+  async create(createPostInput: Prisma.PostCreateInput) {
+    createPostInput.imageUrl = 'test';
     return this.prisma.post.create({
       data: createPostInput,
     });
   }
 
   findAll() {
-    return this.prisma.post.findMany();
+    return this.prisma.post.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   findOne(postWhereUniqueInput: Prisma.PostWhereUniqueInput) {

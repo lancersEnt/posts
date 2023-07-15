@@ -7,12 +7,16 @@ import {
   ResolveField,
   Parent,
   Context,
+  Subscription,
 } from '@nestjs/graphql';
 import { PostsService } from './posts.service';
 import { Prisma } from '@prisma/client';
 import { Post, User } from './graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubSub = new PubSub();
 
 @Resolver('Post')
 export class PostsResolver {
@@ -20,16 +24,24 @@ export class PostsResolver {
 
   @Mutation('createPost')
   @UseGuards(JwtAuthGuard)
-  create(
+  async create(
     @Args('createPostInput') createPostInput: Prisma.PostCreateInput,
     @Context() context: any,
   ) {
     const { req: request, res } = context;
     const userId: string = request.user.userId;
     createPostInput.authorId = userId;
-    return this.postsService.create(createPostInput);
+    const created = await this.postsService.create(createPostInput);
+    pubSub.publish('postCreated', { postCreated: { newPost: created } });
+    return created;
   }
 
+  @Subscription()
+  postCreated() {
+    return pubSub.asyncIterator('postCreated');
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Query('posts')
   findAll() {
     return this.postsService.findAll();
@@ -40,6 +52,7 @@ export class PostsResolver {
     return this.postsService.findOne({ id });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Query('userPosts')
   findUserPosts(@Args('id') id: string) {
     return this.postsService.forUser(id);

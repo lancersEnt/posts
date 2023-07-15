@@ -7,6 +7,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig,
+  ApolloDriver,
+  ApolloDriverConfig,
 } from '@nestjs/apollo';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersResolver } from './users.resolver';
@@ -21,6 +23,20 @@ import { AuthModule } from './auth/auth.module';
       typePaths: ['./**/*.graphql'],
       resolvers: {
         DateTime: GraphQLISODateTime,
+      },
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      path: '/graphql',
+      typePaths: ['./**/*.normal.graphql'],
+      resolvers: {
+        DateTime: GraphQLISODateTime,
+      },
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
       },
     }),
     AuthModule,
