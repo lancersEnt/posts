@@ -7,7 +7,6 @@ export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createPostInput: Prisma.PostCreateInput) {
-    createPostInput.imageUrl = 'test';
     return this.prisma.post.create({
       data: createPostInput,
     });
