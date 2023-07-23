@@ -11,6 +11,8 @@ type Post {
   content: String!
   authorId: String!
   imageUrl: String
+  likersIds:[String]
+  likers: [User]
   user: User
   createdAt: DateTime
   updatedAt: DateTime
@@ -41,13 +43,22 @@ type Mutation {
   createPost(createPostInput: CreatePostInput!): Post!
   updatePost(id: String!, updatePostInput: UpdatePostInput!): Post!
   removePost(id: String!): Post
+  likePost(postId:String!):Boolean
+  unlikePost(postId:String!):Boolean
+
 }
 
 type Result {
   newPost: Post
 }
 
+type PostLikedResult {
+  post: Post
+}
+
 type Subscription {
   postCreated: Result
+  postLiked: PostLikedResult
+  postUnliked: PostLikedResult
 }
 

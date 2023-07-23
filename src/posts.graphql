@@ -19,6 +19,8 @@ type Post @key(fields: "id"){
   imageUrl: String
   authorId: String!
   user: User
+  likersIds:[String]
+  likers: [User]
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -48,5 +50,8 @@ type Mutation {
   createPost(createPostInput: CreatePostInput!): Post!
   updatePost(id: String!, updatePostInput: UpdatePostInput!): Post!
   removePost(id: String!): Post
+  likePost(postId:String!):Boolean
+  unlikePost(postId:String!):Boolean
+
 }
 

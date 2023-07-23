@@ -4,14 +4,12 @@ const prisma = new PrismaClient();
 
 async function main() {
   await prisma.post.deleteMany();
-  const post = await prisma.post.create({
+  await prisma.post.create({
     data: {
       content: 'salemou 3alaykom',
       authorId: 'fakroun',
     },
   });
-
-  console.log({ post });
 }
 
 main()

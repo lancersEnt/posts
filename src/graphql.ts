@@ -33,6 +33,8 @@ export class Post {
     imageUrl?: Nullable<string>;
     authorId: string;
     user?: Nullable<User>;
+    likersIds?: Nullable<Nullable<string>[]>;
+    likers?: Nullable<Nullable<User>[]>;
     createdAt?: Nullable<DateTime>;
     updatedAt?: Nullable<DateTime>;
 }
@@ -51,14 +53,26 @@ export abstract class IMutation {
     abstract updatePost(id: string, updatePostInput: UpdatePostInput): Post | Promise<Post>;
 
     abstract removePost(id: string): Nullable<Post> | Promise<Nullable<Post>>;
+
+    abstract likePost(postId: string): Nullable<boolean> | Promise<Nullable<boolean>>;
+
+    abstract unlikePost(postId: string): Nullable<boolean> | Promise<Nullable<boolean>>;
 }
 
 export class Result {
     newPost?: Nullable<Post>;
 }
 
+export class PostLikedResult {
+    post?: Nullable<Post>;
+}
+
 export abstract class ISubscription {
     abstract postCreated(): Nullable<Result> | Promise<Nullable<Result>>;
+
+    abstract postLiked(): Nullable<PostLikedResult> | Promise<Nullable<PostLikedResult>>;
+
+    abstract postUnliked(): Nullable<PostLikedResult> | Promise<Nullable<PostLikedResult>>;
 }
 
 export type DateTime = any;
