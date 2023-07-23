@@ -13,6 +13,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersResolver } from './users.resolver';
 import { AuthModule } from './auth/auth.module';
+import { KafkaService } from './kafka/kafka.service';
 
 @Module({
   imports: [
@@ -41,6 +42,12 @@ import { AuthModule } from './auth/auth.module';
     }),
     AuthModule,
   ],
-  providers: [PrismaService, PostsService, PostsResolver, UsersResolver],
+  providers: [
+    PrismaService,
+    PostsService,
+    PostsResolver,
+    UsersResolver,
+    KafkaService,
+  ],
 })
 export class PostsModule {}

@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-import { log } from 'console';
+import { KafkaService } from './kafka/kafka.service';
+import { Notification } from './utils/interfaces/notification.interface';
 
 @Injectable()
 export class PostsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private kafka: KafkaService) {}
 
   async create(createPostInput: Prisma.PostCreateInput) {
     return this.prisma.post.create({
@@ -51,7 +52,7 @@ export class PostsService {
     if (likers.includes(userId)) throw new Error('already liked');
     likers.push(userId);
     try {
-      return await this.prisma.post.update({
+      const liked = await this.prisma.post.update({
         where: {
           id: postId,
         },
@@ -59,6 +60,20 @@ export class PostsService {
           likersIds: likers,
         },
       });
+
+      const PostLikedNotification: Notification = {
+        payload: {
+          title: 'Post Liked',
+          body: `${userId} a aimé votre publication`,
+          createdBy: userId,
+          targetUserId: post.authorId,
+        },
+      };
+      this.kafka.produce(
+        'notifications',
+        JSON.stringify(PostLikedNotification),
+      );
+      return liked;
     } catch (error) {
       throw new Error(error.message);
     }
