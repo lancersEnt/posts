@@ -3,6 +3,8 @@ import { PrismaService } from 'prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { KafkaService } from './kafka/kafka.service';
 import { Notification } from './utils/interfaces/notification.interface';
+import getSender from './utils/getSender';
+import capitalize from './utils/capitalize';
 
 @Injectable()
 export class PostsService {
@@ -23,9 +25,13 @@ export class PostsService {
   }
 
   findOne(postWhereUniqueInput: Prisma.PostWhereUniqueInput) {
-    return this.prisma.post.findUnique({
-      where: postWhereUniqueInput,
-    });
+    try {
+      return this.prisma.post.findUniqueOrThrow({
+        where: postWhereUniqueInput,
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   update(
@@ -61,12 +67,17 @@ export class PostsService {
         },
       });
 
+      const sender = await getSender(userId);
+
       const PostLikedNotification: Notification = {
         payload: {
-          title: 'Post Liked',
-          body: `${userId} a aimé votre publication`,
+          title: `Post Liked - ${post.id}`,
+          body: `${capitalize(sender.firstname)} ${capitalize(
+            sender.lastname,
+          )} a aimé votre publication`,
           createdBy: userId,
           targetUserId: post.authorId,
+          action: `/publication/${post.id}`,
         },
       };
       this.kafka.produce(
@@ -94,6 +105,44 @@ export class PostsService {
         },
         data: {
           likersIds: likers,
+        },
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async subscribeToPost(userId: string, postId: string) {
+    const post = await this.prisma.post.findUnique({ where: { id: postId } });
+    const subscribers = post.subscribersIds;
+    if (!post) throw new Error('post not found');
+    if (subscribers.includes(userId)) throw new Error('already subscribed');
+    subscribers.push(userId);
+    try {
+      return this.prisma.post.update({
+        where: { id: postId },
+        data: {
+          subscribersIds: subscribers,
+        },
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async unsubscribeFromPost(userId: string, postId: string) {
+    const post = await this.prisma.post.findUnique({ where: { id: postId } });
+    let subscribers = post.subscribersIds;
+    if (!post) throw new Error('post not found');
+    if (!subscribers.includes(userId)) throw new Error('already unsubscribed');
+    subscribers = subscribers.filter((id) => {
+      return id !== userId;
+    });
+    try {
+      return this.prisma.post.update({
+        where: { id: postId },
+        data: {
+          subscribersIds: subscribers,
         },
       });
     } catch (error) {

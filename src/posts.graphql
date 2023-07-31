@@ -21,6 +21,8 @@ type Post @key(fields: "id"){
   user: User
   likersIds:[String]
   likers: [User]
+  subscribersIds:[String]
+  subscribers: [User]
   createdAt: DateTime
   updatedAt: DateTime
 }

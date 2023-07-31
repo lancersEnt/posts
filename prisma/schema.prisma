@@ -11,11 +11,12 @@ datasource db {
 }
 
 model Post {
-  id            String @id  @default(uuid()) @map("_id") 
-  content       String
-  authorId      String
-  likersIds     String[]    @default([])
-  imageUrl      String?
-  createdAt     DateTime?   @default(now())
-  updatedAt     DateTime?   @default(now())
+  id              String @id  @default(uuid()) @map("_id") 
+  content         String
+  authorId        String
+  likersIds       String[]    @default([])
+  subscribersIds  String[]    @default([])
+  imageUrl        String?
+  createdAt       DateTime?   @default(now())
+  updatedAt       DateTime?   @default(now())
 }

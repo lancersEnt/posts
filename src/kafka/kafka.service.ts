@@ -32,11 +32,8 @@ export class KafkaService {
     await Promise.all(topics.map((topic) => consumer.subscribe({ topic })));
 
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
-        console.log({
-          topic,
-          value: message.value.toString(),
-        });
+      eachMessage: async ({ topic, partition, message, heartbeat }) => {
+        const payload = JSON.parse(message.value.toString());
       },
     });
   }

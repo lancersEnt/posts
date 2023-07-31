@@ -4,5 +4,6 @@ export interface Notification {
     body: string;
     targetUserId: string;
     createdBy: string;
+    action: string;
   };
 }

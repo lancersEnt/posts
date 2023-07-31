@@ -35,6 +35,8 @@ export class Post {
     user?: Nullable<User>;
     likersIds?: Nullable<Nullable<string>[]>;
     likers?: Nullable<Nullable<User>[]>;
+    subscribersIds?: Nullable<Nullable<string>[]>;
+    subscribers?: Nullable<Nullable<User>[]>;
     createdAt?: Nullable<DateTime>;
     updatedAt?: Nullable<DateTime>;
 }
