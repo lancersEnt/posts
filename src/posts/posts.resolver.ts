@@ -11,9 +11,9 @@ import {
 } from '@nestjs/graphql';
 import { PostsService } from './posts.service';
 import { Prisma } from '@prisma/client';
-import { Post, User } from './graphql';
+import { Post, User } from '../graphql';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PubSub } from 'graphql-subscriptions';
 import { log } from 'console';
 
@@ -40,6 +40,14 @@ export class PostsResolver {
     return this.postsService.forUser(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Query('feed')
+  feed(@Args('page') page: number, @Context() context: any) {
+    const { req, res } = context;
+    const userId: string = req.user.userId;
+    return this.postsService.feed(userId, page);
+  }
+
   //* Mutations
   @Mutation('createPost')
   @UseGuards(JwtAuthGuard)
@@ -51,6 +59,7 @@ export class PostsResolver {
     const userId: string = request.user.userId;
     createPostInput.authorId = userId;
     const created = await this.postsService.create(createPostInput);
+    log(created);
     pubSub.publish('postCreated', { postCreated: { newPost: created } });
     return created;
   }
@@ -75,7 +84,7 @@ export class PostsResolver {
     const userId: string = request.user.userId;
     const postLiked = await this.postsService.likePost(userId, postId);
     pubSub.publish('postLiked', { postLiked: { post: postLiked } });
-    return true;
+    return postLiked;
   }
 
   @Mutation('unlikePost')
@@ -84,8 +93,8 @@ export class PostsResolver {
     const { req: request, res } = context;
     const userId: string = request.user.userId;
     const postLiked = await this.postsService.unlikePost(userId, postId);
-    pubSub.publish('postUnliked', { postLiked: { post: postLiked } });
-    return true;
+    pubSub.publish('postUnliked', { postUnliked: { post: postLiked } });
+    return postLiked;
   }
 
   //* Subscriptions
@@ -119,6 +128,17 @@ export class PostsResolver {
       likers.push(user);
     }
     return likers;
+  }
+
+  @ResolveField('subscribers', (returns) => [User])
+  async subscribers(@Parent() post: Post): Promise<User[]> {
+    const { subscribersIds } = post;
+    const subscribers: User[] = [];
+    for (const userId of subscribersIds) {
+      const user = { __typename: 'User', id: userId };
+      subscribers.push(user);
+    }
+    return subscribers;
   }
 
   @ResolveReference()

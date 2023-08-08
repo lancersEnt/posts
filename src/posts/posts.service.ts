@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-import { KafkaService } from './kafka/kafka.service';
-import { Notification } from './utils/interfaces/notification.interface';
-import getSender from './utils/getSender';
-import capitalize from './utils/capitalize';
+import { KafkaService } from '../kafka/kafka.service';
+import { Notification } from '../utils/interfaces/notification.interface';
+import getSender from '../utils/getSender';
+import capitalize from '../utils/capitalize';
+import followingIds from 'src/utils/followingIds';
+import { log } from 'console';
 
 @Injectable()
 export class PostsService {
@@ -112,48 +114,36 @@ export class PostsService {
     }
   }
 
-  async subscribeToPost(userId: string, postId: string) {
-    const post = await this.prisma.post.findUnique({ where: { id: postId } });
-    const subscribers = post.subscribersIds;
-    if (!post) throw new Error('post not found');
-    if (subscribers.includes(userId)) throw new Error('already subscribed');
-    subscribers.push(userId);
-    try {
-      return this.prisma.post.update({
-        where: { id: postId },
-        data: {
-          subscribersIds: subscribers,
-        },
-      });
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
-
-  async unsubscribeFromPost(userId: string, postId: string) {
-    const post = await this.prisma.post.findUnique({ where: { id: postId } });
-    let subscribers = post.subscribersIds;
-    if (!post) throw new Error('post not found');
-    if (!subscribers.includes(userId)) throw new Error('already unsubscribed');
-    subscribers = subscribers.filter((id) => {
-      return id !== userId;
+  async feed(userId: string, page: number) {
+    const ids: string[] = await followingIds(userId);
+    const posts = await this.prisma.post.findMany({
+      where: {
+        authorId: { in: ids },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 5,
+      skip: page * 5,
     });
-    try {
-      return this.prisma.post.update({
-        where: { id: postId },
-        data: {
-          subscribersIds: subscribers,
-        },
-      });
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    let count = await this.prisma.post.count({
+      where: {
+        authorId: { in: ids },
+      },
+    });
+
+    count = Math.ceil(count / 5);
+
+    return { posts, count };
   }
 
   forUser(authorId: string) {
     return this.prisma.post.findMany({
       where: {
         authorId: authorId,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }

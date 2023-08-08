@@ -1,6 +1,6 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Post } from '@prisma/client';
-import { User } from './graphql';
+import { User } from '../graphql';
 import { PostsService } from './posts.service';
 
 @Resolver(() => User)

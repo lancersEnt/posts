@@ -10,6 +10,9 @@
 
 export class CreatePostInput {
     content: string;
+    type: string;
+    videoUrl?: Nullable<string>;
+    documentUrl?: Nullable<string>;
     imageUrl?: Nullable<string>;
     authorId: string;
     createdAt?: Nullable<DateTime>;
@@ -17,6 +20,9 @@ export class CreatePostInput {
 
 export class UpdatePostInput {
     content?: Nullable<string>;
+    type?: Nullable<string>;
+    videoUrl?: Nullable<string>;
+    documentUrl?: Nullable<string>;
     imageUrl?: Nullable<string>;
     authorId?: Nullable<string>;
     updatedAt?: Nullable<DateTime>;
@@ -30,6 +36,9 @@ export class User {
 export class Post {
     id: string;
     content: string;
+    type: string;
+    videoUrl?: Nullable<string>;
+    documentUrl?: Nullable<string>;
     imageUrl?: Nullable<string>;
     authorId: string;
     user?: Nullable<User>;
@@ -47,6 +56,8 @@ export abstract class IQuery {
     abstract post(id: string): Nullable<Post> | Promise<Nullable<Post>>;
 
     abstract userPosts(id: string): Nullable<Post>[] | Promise<Nullable<Post>[]>;
+
+    abstract feed(page: number): Nullable<Feed> | Promise<Nullable<Feed>>;
 }
 
 export abstract class IMutation {
@@ -56,9 +67,14 @@ export abstract class IMutation {
 
     abstract removePost(id: string): Nullable<Post> | Promise<Nullable<Post>>;
 
-    abstract likePost(postId: string): Nullable<boolean> | Promise<Nullable<boolean>>;
+    abstract likePost(postId: string): Nullable<Post> | Promise<Nullable<Post>>;
 
-    abstract unlikePost(postId: string): Nullable<boolean> | Promise<Nullable<boolean>>;
+    abstract unlikePost(postId: string): Nullable<Post> | Promise<Nullable<Post>>;
+}
+
+export class Feed {
+    count?: Nullable<number>;
+    posts: Nullable<Post>[];
 }
 
 export class Result {

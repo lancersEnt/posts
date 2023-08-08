@@ -1,4 +1,9 @@
 import { Module } from '@nestjs/common';
+import { KafkaService } from './kafka.service';
+import { PrismaService } from 'prisma/prisma.service';
 
-@Module({})
+@Module({
+  providers: [KafkaService, PrismaService],
+  exports: [KafkaService],
+})
 export class KafkaModule {}

@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { PostsResolver } from './posts.resolver';
 import { GraphQLISODateTime, GraphQLModule } from '@nestjs/graphql';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
@@ -10,10 +8,9 @@ import {
   ApolloDriver,
   ApolloDriverConfig,
 } from '@nestjs/apollo';
-import { PrismaService } from '../prisma/prisma.service';
-import { UsersResolver } from './users.resolver';
 import { AuthModule } from './auth/auth.module';
-import { KafkaService } from './kafka/kafka.service';
+import { PostsModule } from './posts/posts.module';
+import { KafkaModule } from './kafka/kafka.module';
 
 @Module({
   imports: [
@@ -41,13 +38,9 @@ import { KafkaService } from './kafka/kafka.service';
       },
     }),
     AuthModule,
+    PostsModule,
+    KafkaModule,
   ],
-  providers: [
-    PrismaService,
-    PostsService,
-    PostsResolver,
-    UsersResolver,
-    KafkaService,
-  ],
+  providers: [],
 })
-export class PostsModule {}
+export class AppModule {}
