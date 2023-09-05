@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { KafkaService } from '../kafka/kafka.service';
 import { Notification } from '../utils/interfaces/notification.interface';
@@ -7,12 +6,21 @@ import getSender from '../utils/getSender';
 import capitalize from '../utils/capitalize';
 import followingIds from 'src/utils/followingIds';
 import { log } from 'console';
+import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class PostsService {
   constructor(private prisma: PrismaService, private kafka: KafkaService) {}
 
   async create(createPostInput: Prisma.PostCreateInput) {
+    log(createPostInput.postId);
+    if (createPostInput.postId !== undefined)
+      await this.prisma.post.update({
+        where: { id: createPostInput.postId },
+        data: {
+          shares: { increment: 1 },
+        },
+      });
     return this.prisma.post.create({
       data: createPostInput,
     });
@@ -28,9 +36,11 @@ export class PostsService {
 
   findOne(postWhereUniqueInput: Prisma.PostWhereUniqueInput) {
     try {
-      return this.prisma.post.findUniqueOrThrow({
-        where: postWhereUniqueInput,
-      });
+      if (postWhereUniqueInput.id !== null)
+        return this.prisma.post.findUniqueOrThrow({
+          where: postWhereUniqueInput,
+        });
+      else return null;
     } catch (error) {
       throw new Error(error.message);
     }

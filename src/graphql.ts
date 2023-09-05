@@ -14,6 +14,8 @@ export class CreatePostInput {
     videoUrl?: Nullable<string>;
     documentUrl?: Nullable<string>;
     imageUrl?: Nullable<string>;
+    postId?: Nullable<string>;
+    kladId?: Nullable<string>;
     authorId: string;
     createdAt?: Nullable<DateTime>;
 }
@@ -33,6 +35,10 @@ export class User {
     posts?: Nullable<Post[]>;
 }
 
+export class Klad {
+    id: string;
+}
+
 export class Post {
     id: string;
     content: string;
@@ -40,14 +46,19 @@ export class Post {
     videoUrl?: Nullable<string>;
     documentUrl?: Nullable<string>;
     imageUrl?: Nullable<string>;
+    postId?: Nullable<string>;
+    kladId?: Nullable<string>;
     authorId: string;
     user?: Nullable<User>;
     likersIds?: Nullable<Nullable<string>[]>;
     likers?: Nullable<Nullable<User>[]>;
     subscribersIds?: Nullable<Nullable<string>[]>;
     subscribers?: Nullable<Nullable<User>[]>;
+    shares?: Nullable<number>;
     createdAt?: Nullable<DateTime>;
     updatedAt?: Nullable<DateTime>;
+    post?: Nullable<Post>;
+    klad?: Nullable<Klad>;
 }
 
 export abstract class IQuery {

@@ -10,11 +10,11 @@ import {
   ApolloDriver,
   ApolloDriverConfig,
 } from '@nestjs/apollo';
-import { PrismaService } from '../../prisma/prisma.service';
 import { UsersResolver } from './users.resolver';
 import { AuthModule } from '../auth/auth.module';
 import { KafkaService } from '../kafka/kafka.service';
 import { KafkaModule } from 'src/kafka/kafka.module';
+import { PrismaService } from 'prisma/prisma.service';
 
 @Module({
   imports: [AuthModule, KafkaModule],

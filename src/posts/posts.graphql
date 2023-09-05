@@ -12,6 +12,10 @@ extend type User @key(fields: "id"){
   posts: [Post!]
 }
 
+extend type Klad @key(fields: "id"){
+  id: ID
+}
+
 type Post @key(fields: "id"){
   # Example field (placeholder)
   id: ID!
@@ -20,12 +24,15 @@ type Post @key(fields: "id"){
   videoUrl:String
   documentUrl:String
   imageUrl: String
+  postId: String
+  kladId: String
   authorId: String!
   user: User
   likersIds:[String]
   likers: [User]
   subscribersIds:[String]
   subscribers: [User]
+  shares: Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -37,6 +44,8 @@ input CreatePostInput {
   videoUrl:String
   documentUrl:String
   imageUrl: String
+  postId: String
+  kladId: String
   authorId: String!
   createdAt: DateTime
 }

@@ -5,6 +5,10 @@ type User{
   posts: [Post!]
 }
 
+type Klad{
+  id: ID!
+}
+
 type Post {
   # Example field (placeholder)
   id: ID!
@@ -18,7 +22,12 @@ type Post {
   likers: [User]
   subscribersIds:[String]
   subscribers: [User]
+  postId: String
+  kladId: String
+  post: Post
+  klad: Klad
   user: User
+  shares: Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -30,6 +39,8 @@ input CreatePostInput {
   videoUrl:String
   documentUrl:String
   authorId: String!
+  postId: String
+  kladId: String
   imageUrl: String
   createdAt: DateTime
 }

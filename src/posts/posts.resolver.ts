@@ -59,7 +59,6 @@ export class PostsResolver {
     const userId: string = request.user.userId;
     createPostInput.authorId = userId;
     const created = await this.postsService.create(createPostInput);
-    log(created);
     pubSub.publish('postCreated', { postCreated: { newPost: created } });
     return created;
   }
@@ -117,6 +116,18 @@ export class PostsResolver {
   @ResolveField(() => User)
   user(@Parent() post: Post) {
     return { __typename: 'User', id: post.authorId };
+  }
+
+  @ResolveField(() => User)
+  klad(@Parent() post: Post) {
+    if (post.kladId) return { __typename: 'Klad', id: post.kladId };
+    return null;
+  }
+
+  @ResolveField(() => Post)
+  post(@Parent() post: Post) {
+    if (post.postId) return this.postsService.findOne({ id: post.postId });
+    return null;
   }
 
   @ResolveField('likers', (returns) => [User])
