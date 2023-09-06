@@ -15,9 +15,10 @@ import { AuthModule } from '../auth/auth.module';
 import { KafkaService } from '../kafka/kafka.service';
 import { KafkaModule } from 'src/kafka/kafka.module';
 import { PrismaService } from 'prisma/prisma.service';
+import { SearchModule } from 'src/search/search.module';
 
 @Module({
-  imports: [AuthModule, KafkaModule],
+  imports: [AuthModule, KafkaModule, SearchModule],
   providers: [PrismaService, PostsService, PostsResolver, UsersResolver],
   exports: [PostsService],
 })

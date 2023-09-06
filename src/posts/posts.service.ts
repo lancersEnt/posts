@@ -7,13 +7,18 @@ import capitalize from '../utils/capitalize';
 import followingIds from 'src/utils/followingIds';
 import { log } from 'console';
 import { PrismaService } from 'prisma/prisma.service';
+import SearchService from 'src/search/search.service';
+import { PostSearchBody } from 'src/utils/interfaces/PostSearchBody.interface';
 
 @Injectable()
 export class PostsService {
-  constructor(private prisma: PrismaService, private kafka: KafkaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private kafka: KafkaService,
+    private searchService: SearchService,
+  ) {}
 
   async create(createPostInput: Prisma.PostCreateInput) {
-    log(createPostInput.postId);
     if (createPostInput.postId !== undefined)
       await this.prisma.post.update({
         where: { id: createPostInput.postId },
@@ -21,8 +26,23 @@ export class PostsService {
           shares: { increment: 1 },
         },
       });
-    return this.prisma.post.create({
+
+    const newPost = await this.prisma.post.create({
       data: createPostInput,
+    });
+    this.searchService.indexPost(newPost);
+    return newPost;
+  }
+
+  async searchForPosts(text: string) {
+    const results: any[] = await this.searchService.search(text);
+    log(results);
+    const ids = results.map((result) => result.id);
+    if (!ids.length) {
+      return [];
+    }
+    return this.prisma.post.findMany({
+      where: { id: { in: ids } },
     });
   }
 

@@ -66,6 +66,7 @@ extend type Query {
   post(id: String!): Post
   userPosts(id: String!): [Post]!
   feed(page: Int!): Feed
+  search(text:String): [Post]!
 }
 
 

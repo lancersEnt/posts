@@ -34,6 +34,11 @@ export class PostsResolver {
     return this.postsService.findOne({ id });
   }
 
+  @Query('search')
+  search(@Args('text') text: string) {
+    return this.postsService.searchForPosts(text);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Query('userPosts')
   findUserPosts(@Args('id') id: string) {

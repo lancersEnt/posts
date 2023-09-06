@@ -11,6 +11,7 @@ import {
 import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 import { KafkaModule } from './kafka/kafka.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { KafkaModule } from './kafka/kafka.module';
     AuthModule,
     PostsModule,
     KafkaModule,
+    SearchModule,
   ],
   providers: [],
 })
