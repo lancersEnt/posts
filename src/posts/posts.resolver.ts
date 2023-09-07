@@ -15,7 +15,6 @@ import { Post, User } from '../graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PubSub } from 'graphql-subscriptions';
-import { log } from 'console';
 
 const pubSub = new PubSub();
 
@@ -48,7 +47,7 @@ export class PostsResolver {
   @UseGuards(JwtAuthGuard)
   @Query('feed')
   feed(@Args('page') page: number, @Context() context: any) {
-    const { req, res } = context;
+    const { req } = context;
     const userId: string = req.user.userId;
     return this.postsService.feed(userId, page);
   }
@@ -60,7 +59,7 @@ export class PostsResolver {
     @Args('createPostInput') createPostInput: Prisma.PostCreateInput,
     @Context() context: any,
   ) {
-    const { req: request, res } = context;
+    const { req: request } = context;
     const userId: string = request.user.userId;
     createPostInput.authorId = userId;
     const created = await this.postsService.create(createPostInput);
@@ -84,7 +83,7 @@ export class PostsResolver {
   @Mutation('likePost')
   @UseGuards(JwtAuthGuard)
   async likePost(@Args('postId') postId: string, @Context() context: any) {
-    const { req: request, res } = context;
+    const { req: request } = context;
     const userId: string = request.user.userId;
     const postLiked = await this.postsService.likePost(userId, postId);
     pubSub.publish('postLiked', { postLiked: { post: postLiked } });
@@ -94,7 +93,7 @@ export class PostsResolver {
   @Mutation('unlikePost')
   @UseGuards(JwtAuthGuard)
   async unlikePost(@Args('postId') postId: string, @Context() context: any) {
-    const { req: request, res } = context;
+    const { req: request } = context;
     const userId: string = request.user.userId;
     const postLiked = await this.postsService.unlikePost(userId, postId);
     pubSub.publish('postUnliked', { postUnliked: { post: postLiked } });
@@ -135,7 +134,7 @@ export class PostsResolver {
     return null;
   }
 
-  @ResolveField('likers', (returns) => [User])
+  @ResolveField('likers', () => [User])
   async likers(@Parent() post: Post): Promise<User[]> {
     const { likersIds } = post;
     const likers: User[] = [];
@@ -146,7 +145,7 @@ export class PostsResolver {
     return likers;
   }
 
-  @ResolveField('subscribers', (returns) => [User])
+  @ResolveField('subscribers', () => [User])
   async subscribers(@Parent() post: Post): Promise<User[]> {
     const { subscribersIds } = post;
     const subscribers: User[] = [];
