@@ -41,9 +41,17 @@ export class PostsService {
     if (!ids.length) {
       return [];
     }
-    return this.prisma.post.findMany({
+    const posts = await this.prisma.post.findMany({
       where: { id: { in: ids } },
     });
+
+    // Create a map of ids to their corresponding posts for efficient lookup
+    const postsMap = new Map(posts.map((post) => [post.id, post]));
+
+    // Sort the posts array based on the order of ids
+    const sortedPosts = ids.map((id) => postsMap.get(id));
+
+    return sortedPosts;
   }
 
   findAll() {

@@ -34,8 +34,8 @@ export class PostsResolver {
     return this.postsService.findOne({ id });
   }
 
-  @Query('search')
-  search(@Args('text') text: string) {
+  @Query('searchForPosts')
+  searchForPosts(@Args('text') text: string) {
     return this.postsService.searchForPosts(text);
   }
 

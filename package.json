@@ -29,6 +29,7 @@
     "@apollo/federation": "^0.38.1",
     "@apollo/server": "^4.7.3",
     "@apollo/subgraph": "^2.4.7",
+    "@elastic/elasticsearch": "^7.9.1",
     "@nestjs/apollo": "^11.0.6",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^3.0.1",

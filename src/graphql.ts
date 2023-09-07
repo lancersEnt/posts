@@ -69,6 +69,8 @@ export abstract class IQuery {
     abstract userPosts(id: string): Nullable<Post>[] | Promise<Nullable<Post>[]>;
 
     abstract feed(page: number): Nullable<Feed> | Promise<Nullable<Feed>>;
+
+    abstract searchForPosts(text?: Nullable<string>): Nullable<Post>[] | Promise<Nullable<Post>[]>;
 }
 
 export abstract class IMutation {
